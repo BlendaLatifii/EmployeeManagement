@@ -1,13 +1,13 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Department;
 
 namespace Application.Interfaces
 {
     public interface IDepartmentService
     {
-        Task<List<DepartmentDto>> GetAllAsync(CancellationToken cancellationToken);
-        Task<DepartmentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-        Task<DepartmentDto> AddAsync(DepartmentDto model, CancellationToken cancellationToken);
-        Task<DepartmentDto> UpdateAsync(DepartmentDto model, CancellationToken cancellationToken);
+        Task<List<DepartmentDetailDto>> GetAllAsync(CancellationToken cancellationToken);
+        Task<DepartmentDetailDto> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<DepartmentDetailDto> AddAsync(AddDepartmentDto model, CancellationToken cancellationToken);
+        Task<DepartmentDetailDto> UpdateAsync(DepartmentDetailDto model, CancellationToken cancellationToken);
         Task DeleteAsync(Guid id, CancellationToken cancellationToken);
         Task<int> GetNumberOfDepartmentsAsync(CancellationToken cancellationToken);
 

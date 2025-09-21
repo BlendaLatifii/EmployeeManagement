@@ -1,11 +1,12 @@
 ﻿using Domain.Entities;
 using Domain.Interface.Repository;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Infrastructure.Repositories
 {
-    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
+    public class EmployeeRepository : SoftDeletableGenericRepository<Employee>, IEmployeeRepository
     {
         public EmployeeRepository(AppDbContext dbContext) : base(dbContext)
         {

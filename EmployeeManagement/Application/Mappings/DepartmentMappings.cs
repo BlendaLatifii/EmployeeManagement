@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Department;
 using AutoMapper;
 using Domain.Entities;
 
@@ -8,9 +8,9 @@ namespace Application.Mappings
     {
         public DepartmentMappings()
         {
-            CreateMap<Department, DepartmentDto>();
+            CreateMap<Department, DepartmentDetailDto>();
 
-            CreateMap<DepartmentDto, Department>();
+            CreateMap<AddDepartmentDto, Department>();
         }
     }
 }

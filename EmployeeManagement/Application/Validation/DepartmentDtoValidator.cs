@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Department;
 using Domain.Constants;
 using FluentValidation;
 

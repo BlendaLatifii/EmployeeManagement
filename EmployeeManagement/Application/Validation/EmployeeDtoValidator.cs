@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Employee;
 using Domain.Constants;
 using Domain.Interface.Repository;
 using FluentValidation;

@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Department;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -18,13 +18,13 @@ public class DepartmentService : IDepartmentService
         _mapper = mapper;
         _validator = validator;
     }
-    public async Task<List<DepartmentDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<DepartmentDetailDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var departments = await _departmentRepository.GetAllAsync(cancellationToken);
 
-        return _mapper.Map<List<DepartmentDto>>(departments);
+        return _mapper.Map<List<DepartmentDetailDto>>(departments);
     }
-    public async Task<DepartmentDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<DepartmentDetailDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var department = await _departmentRepository.GetByIdAsync(id, cancellationToken);
 
@@ -33,9 +33,9 @@ public class DepartmentService : IDepartmentService
             throw new KeyNotFoundException();
         }
 
-        return _mapper.Map<DepartmentDto>(department);
+        return _mapper.Map<DepartmentDetailDto>(department);
     }
-    public async Task<DepartmentDto> AddAsync(DepartmentDto model, CancellationToken cancellationToken)
+    public async Task<DepartmentDetailDto> AddAsync(AddDepartmentDto model, CancellationToken cancellationToken)
     {
         _validator.ValidateAndThrow(model);
         var department = _mapper.Map<Department>(model);
@@ -45,7 +45,7 @@ public class DepartmentService : IDepartmentService
         return await GetByIdAsync(department.Id, cancellationToken);
     }
 
-    public async Task<DepartmentDto> UpdateAsync(DepartmentDto model, CancellationToken cancellationToken)
+    public async Task<DepartmentDetailDto> UpdateAsync(DepartmentDetailDto model, CancellationToken cancellationToken)
     {
         _validator.ValidateAndThrow(model);
 
@@ -53,7 +53,7 @@ public class DepartmentService : IDepartmentService
 
         await _departmentRepository.UpdateAsync(department, cancellationToken);
         
-        return _mapper.Map<DepartmentDto>(department);
+        return _mapper.Map<DepartmentDetailDto>(department);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)

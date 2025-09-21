@@ -1,6 +1,8 @@
-﻿namespace Domain.Entities
+﻿using Domain.Entities.Abstraction;
+
+namespace Domain.Entities
 {
-    public class Department
+    public class Department : SoftDeletableEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;

@@ -1,48 +1,74 @@
-using Application.Interfaces;
 using Application.Validation;
-using Domain.Interface.Repository;
+using Domain.Configs;
+using Domain.Entities;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Infrastructure;
-using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using Infrastructure.Extensions;
+using Presentation.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var apiConfig = builder.Configuration.GetSection(nameof(ApiConfig)).Get<ApiConfig>()!;
+
+builder.Services.AddCustomIdentity();
+
+builder.Services.AddCostomAuthentication(apiConfig.ApiSecret);
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddOpenApi();
 
+builder.Services.AddSwagger();
+
 builder.Services.AddFluentValidationAutoValidation();
+
 builder.Services.AddValidatorsFromAssemblyContaining<EmployeeDtoValidator>();
 
-
-builder.Services.AddDbContext<AppDbContext>(x =>
-x.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext(builder.Configuration);
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-
+builder.Services.AddApiServices(apiConfig);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(options =>
+options.WithOrigins(apiConfig.AllowedOrigin.Split(",").Select(origin => origin.Trim()).ToArray())
+.AllowAnyMethod()
+.AllowAnyHeader()
+.WithExposedHeaders("Content-Disposition")
+.AllowCredentials());
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppDbContext>();
+    var userManager = services.GetRequiredService<UserManager<User>>();
+
+    await DbInitializer.SeedAsync(context, userManager);
+}
 
 app.Run();

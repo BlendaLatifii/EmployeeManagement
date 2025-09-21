@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Employee;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -16,12 +16,12 @@ public class EmployeeService : IEmployeeService
         _mapper = mapper;
         _validator = validator;
     }
-    public async Task<List<EmployeeDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<EmployeeDetailDto>> GetAllAsync(CancellationToken cancellationToken)
     {
         var employees = await _employeeRepository.GetAllAsync(cancellationToken);
-        return _mapper.Map<List<EmployeeDto>>(employees);
+        return _mapper.Map<List<EmployeeDetailDto>>(employees);
     }
-    public async Task<EmployeeDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<EmployeeDetailDto> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
 
         var employee = await _employeeRepository.GetByIdAsync(id, cancellationToken);
@@ -31,9 +31,9 @@ public class EmployeeService : IEmployeeService
             throw new Exception();
         }
 
-        return _mapper.Map<EmployeeDto>(employee);
+        return _mapper.Map<EmployeeDetailDto>(employee);
     }
-    public async Task<EmployeeDto> AddAsync(EmployeeDto model, CancellationToken cancellationToken)
+    public async Task<EmployeeDetailDto> AddAsync(AddEmployeeDto model, CancellationToken cancellationToken)
     {
         _validator.ValidateAndThrow(model);
 
@@ -42,13 +42,13 @@ public class EmployeeService : IEmployeeService
         return await  GetByIdAsync(employee.Id,cancellationToken);
     }
 
-    public async Task<EmployeeDto> UpdateAsync(EmployeeDto model, CancellationToken cancellationToken)
+    public async Task<EmployeeDetailDto> UpdateAsync(EmployeeDetailDto model, CancellationToken cancellationToken)
     {
         _validator.ValidateAndThrow(model);
 
         var employee = _mapper.Map<Employee>(model);
         await _employeeRepository.UpdateAsync(employee, cancellationToken);
-        return _mapper.Map<EmployeeDto>(employee);
+        return _mapper.Map<EmployeeDetailDto>(employee);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)

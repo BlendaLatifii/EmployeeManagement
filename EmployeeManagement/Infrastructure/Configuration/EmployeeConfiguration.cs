@@ -1,14 +1,17 @@
 ﻿using Domain.Constants;
 using Domain.Entities;
+using Infrastructure.Configuration.Abstraction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configuration
 {
-    public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+    public class EmployeeConfiguration : SoftDeletableConfiguration<Employee>
     {
-        public void Configure(EntityTypeBuilder<Employee> builder)
+        public override void Configure(EntityTypeBuilder<Employee> builder)
         {
+            base.Configure(builder);
+
             builder.HasKey(employee => employee.Id);
 
             builder.Property(employee => employee.Name)

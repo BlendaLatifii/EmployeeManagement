@@ -12,5 +12,6 @@ namespace Application.Interfaces
         Task<int> CountAllEmployeesAsync(CancellationToken cancellationToken);
         Task<int> CountEmployeesInDepartmentAsync(string nameOfDepartment, CancellationToken cancellationToken);
         Task<int> GetEmployeeCountByJoiningDateAsync(int daysAgo, CancellationToken cancellationToken);
+        Task<List<EmployeeDetailDto>> FilterEmployeeByDepartmentAsync( Guid departmentId, CancellationToken cancellationToken);
     }
 }

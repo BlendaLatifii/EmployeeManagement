@@ -26,9 +26,9 @@ namespace Presentation.Controllers
             return Ok(employees);
         }
 
-        [Authorize(Roles = RoleConstants.Admin)]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Employee)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeDetailDto>> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<ActionResult<EmployeeDetailDto>> GetByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var model = await _employeeService.GetByIdAsync(id, cancellationToken);
 
@@ -46,7 +46,7 @@ namespace Presentation.Controllers
 
         [Authorize(Roles = RoleConstants.Admin)]
         [HttpPut]
-        public async Task<ActionResult<EmployeeDetailDto>> Updatesync([FromBody] EmployeeDetailDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult<EmployeeDetailDto>> UpdateAsync([FromBody] EmployeeDetailDto model, CancellationToken cancellationToken)
         {
             var employee = await _employeeService.UpdateAsync(model, cancellationToken);
 
@@ -60,6 +60,15 @@ namespace Presentation.Controllers
             await _employeeService.DeleteAsync(id, cancellationToken);
 
             return Ok();
+        }
+
+        [Authorize(Roles = RoleConstants.Admin)]
+        [HttpGet("[action]/{departmentId}")]
+        public async Task<ActionResult<List<EmployeeDetailDto>>> FilterEmployeeByDepartmentAsync(Guid departmentId, CancellationToken cancellationToken)
+        {
+            var employees = await _employeeService.FilterEmployeeByDepartmentAsync(departmentId, cancellationToken);
+
+            return Ok(employees);
         }
     }
 }

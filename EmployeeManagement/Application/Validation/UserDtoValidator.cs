@@ -8,10 +8,10 @@ namespace Application.Validation
     {
         public UserDtoValidator()
         {
-            RuleFor(x => x.Email).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
-            RuleFor(x => x.UserName).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
-            RuleFor(x => x.LastName).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
-            RuleFor(x => x.Roles).Must(x => x.Any());
+            RuleFor(user => user.Email).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
+            RuleFor(user => user.UserName).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
+            RuleFor(user => user.LastName).NotEmpty().NotNull().MaximumLength(MaxLength.Short);
+            RuleFor(user => user.Roles).Must(role => role.Any());
         }
     }
 }

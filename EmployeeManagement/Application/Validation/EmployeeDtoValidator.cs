@@ -11,14 +11,16 @@ namespace Application.Validation
         public EmployeeDtoValidator(IEmployeeRepository employeeRepository)
         {
             RuleFor(employee => employee.Name).NotNull().NotEmpty().MaximumLength(MaxLength.Short);
-            RuleFor(employee => employee.Surname).NotNull().NotEmpty().MaximumLength(MaxLength.Short);
+            RuleFor(employee => employee.LastName).NotNull().NotEmpty().MaximumLength(MaxLength.Short);
             RuleFor(employee => employee.DateOfJoining).NotNull().NotEmpty();
             RuleFor(employee => employee.Email).NotNull().NotEmpty().MaximumLength(MaxLength.Short);
-            RuleFor(employee => employee.Email).MustAsync(async (email, cancellationToken) =>
+            RuleFor(employee => employee).MustAsync(async (dto, cancellationToken) =>
             {
-                bool exists = await employeeRepository.Query().Where(employee => employee.Email == email).AnyAsync(cancellationToken);
+                var id = (dto as EmployeeDetailDto)?.Id ?? Guid.Empty;
+                bool exists = await employeeRepository.Query().Where(employee => employee.User.Email == dto.Email && employee.Id != id).AnyAsync(cancellationToken);
                 return !exists;
             }).WithMessage("Email must be unique");
+            RuleFor(employee => employee.DepartmentId).NotNull().NotEmpty();
         }
     }
 }

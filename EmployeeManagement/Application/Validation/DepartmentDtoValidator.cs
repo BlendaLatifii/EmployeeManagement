@@ -8,8 +8,8 @@ namespace Application.Validation
     {
         public DepartmentDtoValidator()
         {
-            RuleFor(x => x.Name).NotEmpty().MaximumLength(MaxLength.Short);
-            RuleFor(x => x.Description).NotEmpty().MaximumLength(MaxLength.Large);
+            RuleFor(department => department.Name).NotEmpty().MaximumLength(MaxLength.Short);
+            RuleFor(department => department.Description).NotEmpty().MaximumLength(MaxLength.Large);
         }
     }
 }

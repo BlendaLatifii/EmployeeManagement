@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
 
         public IQueryable<TEntity> Query() => _dbSet.AsQueryable();
 
-        public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        public virtual async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _dbSet.FindAsync(id, cancellationToken);
         }

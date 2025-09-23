@@ -13,12 +13,12 @@ namespace Infrastructure.Repositories
 
         public async Task<List<User>> GetUsersWithRole(CancellationToken cancellationToken)
         {
-           return await _dbSet.Include(x=> x.Roles).ThenInclude(x=> x.Role).ToListAsync(cancellationToken);
+           return await _dbSet.Include(x=> x.UserRoles).ThenInclude(x=> x.Role).ToListAsync(cancellationToken);
         }
 
         public async Task<User> GetUserWithRole(Guid id,CancellationToken cancellationToken)
         {
-            return await _dbSet.Where(x=> x.Id == id).Include(x => x.Roles).ThenInclude(x => x.Role).FirstAsync(cancellationToken);
+            return await _dbSet.Where(x=> x.Id == id).Include(x => x.UserRoles).ThenInclude(x => x.Role).FirstAsync(cancellationToken);
         }
     }
 }

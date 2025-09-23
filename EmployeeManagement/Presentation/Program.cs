@@ -7,10 +7,13 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Infrastructure.Extensions;
 using Presentation.Extensions;
+using Application.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var apiConfig = builder.Configuration.GetSection(nameof(ApiConfig)).Get<ApiConfig>()!;
+
+var dbInitializerConfig = builder.Configuration.GetSection(nameof(DbInitializerConfig)).Get<DbInitializerConfig>()!;
 
 builder.Services.AddCustomIdentity();
 
@@ -34,9 +37,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<EmployeeDtoValidator>();
 
 builder.Services.AddDbContext(builder.Configuration);
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(DepartmentMappings).Assembly);
 
-builder.Services.AddApiServices(apiConfig);
+builder.Services.AddApiServices(apiConfig, dbInitializerConfig);
 
 var app = builder.Build();
 
@@ -67,8 +70,9 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<AppDbContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
+    var dbConfig = services.GetRequiredService<DbInitializerConfig>();
 
-    await DbInitializer.SeedAsync(context, userManager);
+    await DbInitializer.SeedAsync(context, userManager, dbConfig);
 }
 
 app.Run();

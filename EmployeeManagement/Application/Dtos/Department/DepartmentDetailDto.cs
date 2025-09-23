@@ -2,6 +2,7 @@
 {
     public class DepartmentDetailDto : DepartmentDto
     {
-        Guid Id { get; set; }
+       public Guid Id { get; set; }
+        public bool Highlighted { get; set; } = false;
     }
 }

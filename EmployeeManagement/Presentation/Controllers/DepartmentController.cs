@@ -26,7 +26,7 @@ namespace Presentation.Controllers
             return Ok(departments);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Employee)]
         [HttpGet("{id}")]
         public async Task<ActionResult<DepartmentDetailDto>> GetByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
         {
@@ -46,7 +46,7 @@ namespace Presentation.Controllers
 
         [Authorize(Roles = RoleConstants.Admin)]
         [HttpPut]
-        public async Task<ActionResult<DepartmentDetailDto>> Updatesync([FromBody] DepartmentDetailDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult<DepartmentDetailDto>> UpdateAsync([FromBody] UpdateDepartmentDto model, CancellationToken cancellationToken)
         {
             var department = await _departmentService.UpdateAsync(model, cancellationToken);
 

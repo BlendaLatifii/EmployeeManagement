@@ -1,11 +1,12 @@
-﻿using Domain.Entities;
+﻿using Domain.Constants;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Data
 {
     public static class DbInitializer
     {
-            public static async Task SeedAsync(AppDbContext context, UserManager<User> userManager)
+            public static async Task SeedAsync(AppDbContext context, UserManager<User> userManager, DbInitializerConfig config)
             {
                await context.Database.EnsureDeletedAsync(CancellationToken.None);
                await context.Database.EnsureCreatedAsync(CancellationToken.None);
@@ -13,8 +14,8 @@ namespace Infrastructure.Data
                 if (!context.Roles.Any())
                 {
                     context.Roles.AddRange(
-                        new Role { Name = "Admin", NormalizedName = "ADMIN", Key = Domain.Enum.Role.Admin },
-                        new Role { Name = "Employee", NormalizedName = "EMPLOYEE", Key = Domain.Enum.Role.Employee }
+                        new Role { Name = RoleConstants.Admin, NormalizedName = RoleConstants.Admin.ToUpper(), Key = Domain.Enum.Role.Admin },
+                        new Role { Name = RoleConstants.Employee, NormalizedName = RoleConstants.Employee.ToUpper(), Key = Domain.Enum.Role.Employee }
                     );
                     await context.SaveChangesAsync(CancellationToken.None);
                 }
@@ -25,14 +26,26 @@ namespace Infrastructure.Data
                     var adminUser = new User
                     {
                         UserName = "admin",
-                        LastName ="admin",
-                        Email = "admin@example.com",
+                        LastName = "admin",
+                        Email = config.Admin.Email,
                         EmailConfirmed = true
                     };
 
-                    await userManager.CreateAsync(adminUser, "Admin123!");
+                    await userManager.CreateAsync(adminUser, config.Admin.Password);
                     await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
+                
+                    var employeeUser = new User
+                    {
+                        UserName = "employee",
+                        LastName = "employee",
+                        Email = config.Employee.Email,
+                        EmailConfirmed = true
+                    };
+
+                    await userManager.CreateAsync(employeeUser, config.Employee.Password);
+                    await userManager.AddToRoleAsync(employeeUser, RoleConstants.Employee);
+                    await context.SaveChangesAsync(CancellationToken.None);
+            }
             }
         }
     }

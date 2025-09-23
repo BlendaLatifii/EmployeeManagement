@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Interface.Security
+﻿namespace Domain.Interface.Security
 {
     public interface IAuthorizationManager
     {
         Guid? GetUserId();
+        Guid? GetDepartmentId();
     }
 }

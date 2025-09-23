@@ -8,13 +8,14 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<UserRole> builder)
         {
-           builder.HasOne(userRole=> userRole.User)
-                .WithMany(userRole => userRole.Roles)
+
+            builder.HasOne(userRole=> userRole.User)
+                .WithMany(userRole => userRole.UserRoles)
                 .HasForeignKey(userRole => userRole.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(userRole => userRole.Role)
-               .WithMany()
+               .WithMany(role => role.UserRoles)
                .HasForeignKey(userRole => userRole.RoleId)
                .OnDelete(DeleteBehavior.Cascade);
         }

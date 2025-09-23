@@ -26,7 +26,7 @@ namespace Presentation.Controllers
             return Ok(users);
         }
 
-        [Authorize(Roles = RoleConstants.Admin)]
+        [Authorize(Roles = RoleConstants.Admin + "," + RoleConstants.Employee)]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDetailsDto>> GetByIdAsync([FromRoute] Guid id, CancellationToken cancellationToken)
         { 
@@ -43,6 +43,5 @@ namespace Presentation.Controllers
 
             return Ok(user);
         }
-       
     }
 }

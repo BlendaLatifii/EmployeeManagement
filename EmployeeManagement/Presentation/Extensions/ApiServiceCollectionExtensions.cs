@@ -3,7 +3,9 @@ using Application.Services;
 using Domain.Configs;
 using Domain.Interface.Repository;
 using Domain.Interface.Security;
+using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Internal;
 using Presentation.Security;
 
 namespace Infrastructure.Extensions
@@ -11,10 +13,11 @@ namespace Infrastructure.Extensions
     public static class ApiServiceCollectionExtensions
     {
 
-        public static void AddApiServices(this IServiceCollection services, ApiConfig apiConfig)
+        public static void AddApiServices(this IServiceCollection services, ApiConfig apiConfig, DbInitializerConfig dbInitializerConfig)
         {
 
-           services.AddSingleton(apiConfig);
+            services.AddSingleton(apiConfig);
+            services.AddSingleton(dbInitializerConfig);
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IDepartmentService, DepartmentService>();

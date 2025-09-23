@@ -2,6 +2,6 @@
 {
     public class EmployeeDetailDto : EmployeeDto
     {
-         Guid Id { get; set; }
+         public Guid Id { get; set; }
     }
 }

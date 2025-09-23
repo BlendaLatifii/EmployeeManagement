@@ -4,7 +4,6 @@
     {
         DateTime CreateDate { get; set; }
         Guid CreateUserId { get; set; }
-
         User CreateUser { get; set; }
     }
 }

@@ -3,10 +3,12 @@ using Application.Dtos.Users;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Configs;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Interface.Repository;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,9 +24,10 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly RoleManager<Role> _roleManager;    
         private readonly IValidator<SaveUserDto> _validator;
+        private readonly IValidator<UserDetailsDto> _updatedUserValidator;
         private readonly ApiConfig _apiConfig;
 
-        public UserService(RoleManager<Role> roleManager,IUserRepository userRepository, UserManager<User> userManager, IMapper mapper, IValidator<SaveUserDto> validator,ApiConfig apiConfig)
+        public UserService(RoleManager<Role> roleManager,IUserRepository userRepository, UserManager<User> userManager, IMapper mapper, IValidator<SaveUserDto> validator,ApiConfig apiConfig, IValidator<UserDetailsDto> updatedUserValidator)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -32,6 +35,7 @@ namespace Application.Services
             _apiConfig = apiConfig;
             _roleManager = roleManager;
             _userRepository = userRepository;
+            _updatedUserValidator = updatedUserValidator;
         }
         public async Task<AuthenticationDto> LoginAsync(LoginDto loginModel, CancellationToken cancellationToken)
         {
@@ -57,6 +61,16 @@ namespace Application.Services
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
+
+            Guid? departmentId = await _userRepository.Query()
+                .Where(x => x.Id == user.Id && x.Employee != null)
+                .Select(x => x.Employee!.DepartmentId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (departmentId.HasValue && departmentId != Guid.Empty)
+            {
+                authClaims.Add(new Claim(ClaimConstants.Department, departmentId.ToString()!));
+            }
             
             var token = CreateToken(authClaims);
 
@@ -71,8 +85,6 @@ namespace Application.Services
                 UserData = userData, 
                 UserRole = userRoles.ToList()
             };
-
-
         }
 
         public  string CreateToken(IEnumerable<Claim> claims)
@@ -125,9 +137,28 @@ namespace Application.Services
            
             await _userManager.AddToRolesAsync(user, roles);
 
-            await _userRepository.AddAsync(user, cancellationToken);
-
             return await GetByIdAsync(user.Id, cancellationToken);
+        }
+
+        public async Task<UserDetailsDto> UpdateUserAsync(UserDetailsDto model, CancellationToken cancellationToken)
+        {
+            await _updatedUserValidator.ValidateAndThrowAsync(model);
+
+            var existingUser = await _userRepository.GetByIdAsync(model.Id,cancellationToken);
+
+            if(existingUser is null)
+            {
+                throw new Exception();
+            }
+            existingUser.UserName = model.UserName;
+            existingUser.Email  = model.Email;
+            existingUser.LastName = model.LastName;
+            existingUser.PhoneNumber = model.PhoneNumber;
+
+            await _userRepository.UpdateAsync(existingUser, cancellationToken);
+
+
+            return _mapper.Map<UserDetailsDto>(existingUser);
         }
 
     }

@@ -14,22 +14,17 @@ namespace Infrastructure.Configuration
 
             builder.HasKey(employee => employee.Id);
 
-            builder.Property(employee => employee.Name)
-                .IsRequired().HasMaxLength(MaxLength.Short);
-
-            builder.Property(employee => employee.Surname)
-              .IsRequired().HasMaxLength(MaxLength.Short);
-
-            builder.Property(employee => employee.Email).IsRequired().HasMaxLength(MaxLength.Short);
-
-            builder.HasIndex(employee => employee.Email).IsUnique();
-
             builder.Property(employee => employee.DateOfJoining).IsRequired();
 
-            builder.HasOne<Department>(employee => employee.Department)
+            builder.HasOne(employee => employee.Department)
                 .WithMany(employee => employee.Employees)
                 .HasForeignKey(employee => employee.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(employee => employee.User)
+               .WithOne(user => user.Employee)
+               .HasForeignKey<Employee>(employe => employe.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

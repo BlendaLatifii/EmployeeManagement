@@ -1,4 +1,5 @@
-﻿using Domain.Interface.Security;
+﻿using Domain.Constants;
+using Domain.Interface.Security;
 using System.Security.Claims;
 
 namespace Presentation.Security
@@ -20,6 +21,18 @@ namespace Presentation.Security
                 return parsedId;
             }
 
+            return null;
+
+        }
+
+        public Guid? GetDepartmentId()
+        {
+            var claim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimConstants.Department);
+
+            if (claim != null && Guid.TryParse(claim.Value, out Guid departmentId))
+            {
+                return departmentId;
+            }
             return null;
 
         }
